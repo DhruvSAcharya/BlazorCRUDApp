@@ -1,0 +1,98 @@
+﻿@using BlazorLearningApp.Controller;
+@using BlazorLearningApp.Models;
+@using global::App.Models;
+
+@inject PeopleHandlar peopleHandler;
+
+
+<SurveyPrompt Title="Update/Insert List" />
+
+<div class="row g-3">
+    <div class="col-md-6">
+        <label for="inputid" class="form-label">ID</label>
+        <input type="number" @onfocusout="HandalUpdate" @bind="@people.Id" class="form-control" id="inputid">
+    </div>
+    <div class="col-md-6">
+        <label for="inputname" class="form-label">Name</label>
+        <input type="text" @bind="@people.Name" class="form-control" id="inputname">
+    </div>
+    <div class="col-md-6">
+        <label for="inputmobbile" class="form-label">Mobile</label>
+        <input type="text" @bind="@people.Mobile" class="form-control" id="inputmobile">
+    </div>
+    <div class="col-md-6">
+        <label for="inputEmail" class="form-label">Email</label>
+        <input type="email" @bind="@people.Email" class="form-control" id="inputEmail">
+    </div>
+    <div class="col-12">
+        <label for="inputAddress" class="form-label">Address</label>
+        <input type="text" @bind="@people.Address" class="form-control" id="inputAddress" placeholder="1234 Main St">
+    </div>
+    <div class="col-6">
+        <button @onclick="AddPeople" class="btn btn-primary" style="display:@AddbtnVisibility">Add</button>
+        <button @onclick="Update" class="btn btn-primary" style="display:@UpdatebtnVisibility">Update</button>
+    </div>
+    <div class="col-6">
+        <button @onclick="ClearForm" class="btn btn-primary">Clear</button>
+    </div>
+</div>
+
+@code {
+    DisplayPeople people;
+    private string AddbtnVisibility;
+    private string UpdatebtnVisibility;
+
+    [Parameter]
+    public EventCallback UpdatePeopleList { get; set; }
+
+    protected override void OnInitialized()
+    {
+        people = new DisplayPeople();
+        AddbtnVisibility = "unset";
+        UpdatebtnVisibility = "none";
+    }
+
+    private async Task AddPeople()
+    {
+        if(people != null)
+        {
+            People p = people.ConverDbModel();
+            peopleHandler.AddPeople(people.ConverDbModel());
+            ClearForm();
+            await UpdatePeopleList.InvokeAsync();
+        }
+    }
+
+    private async Task Update()
+    {
+        AddbtnVisibility = "unset";
+        UpdatebtnVisibility = "none";
+        peopleHandler.UpdatePle(people.ConverDbModel());
+        ClearForm();
+        await UpdatePeopleList.InvokeAsync();
+    }
+
+    private void ClearForm()
+    {
+        people = new DisplayPeople();
+        AddbtnVisibility = "unset";
+        UpdatebtnVisibility = "none";
+    }
+
+    private void HandalUpdate()
+    {
+        int id = people.Id;
+        People p = peopleHandler.GetPeopleById(id);
+        if(p != null)
+        {
+            people.SetDisplayModel(p);
+            AddbtnVisibility = "none";
+            UpdatebtnVisibility = "unset";
+        }
+        else
+        {
+            ClearForm();
+        }
+    }
+
+}
