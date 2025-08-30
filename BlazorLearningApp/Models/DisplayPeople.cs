@@ -1,13 +1,20 @@
-﻿using App.Models;
+﻿using System.ComponentModel.DataAnnotations;
+using App.Models;
 
 namespace BlazorLearningApp.Models
 {
     public class DisplayPeople
     {
         public int Id { get; set; }
+        [Required]
         public string Name { get; set; }
+        [Required]
+        [Phone]
         public string Mobile { get; set; }
+        [Required]
+        [EmailAddress]
         public string Email { get; set; }
+        [Required]
         public string Address { get; set; }
 
         public People ConverDbModel()
